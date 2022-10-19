@@ -1,0 +1,30 @@
+# Snowflake
+
+name: $(Date:yyyyMMdd)$(Rev:.r)
+
+trigger:
+  branches:
+    include:
+      - stage
+      - master
+  paths:
+    include:
+      - /migrations
+
+jobs:
+  - job: Deploy_Snowflake
+    variables:
+      - name: PROJECT_FOLDER
+        value: $(System.DefaultWorkingDirectory)
+      - name: FLYWAY_DOCKER_VERSION
+        value: '9.2.3'
+      - name: SNOWFLAKE_WAREHOUSE
+        value: 'COMPUTE_WH'
+      - name: SNOWFLAKE_ROLE
+        value: DB_ETL_ROLE
+      - group: Snowflake Stage AKV
+    pool:
+      vmImage: 'ubuntu-20.04'
+    steps:
+      - bash: |
+          docker run --rm -v $(PROJECT_FOLDER)/migrations:/flyway/sql/migrations -v $(PROJECT_FOLDER)/repeatable_migrations:/flyway/sql/repeatable_migrations flyway/flyway:$(FLYWAY_DOCKER_VERSION)-azure flyway -url='jdbc:snowflake://$(Snowflake-Account).snowflakecomputing.com/?db=$(Snowflake-DB)&warehouse=$(SNOWFLAKE_WAREHOUSE)&role=$(SNOWFLAKE_ROLE)' -user=$(Snowflake-Flyway-Username) -password='$(Snowflake-Flyway-Password)' -ignoreMigrationPatterns='*:pending' validate
