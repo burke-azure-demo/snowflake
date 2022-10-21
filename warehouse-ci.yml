@@ -27,4 +27,4 @@ jobs:
       vmImage: 'ubuntu-20.04'
     steps:
       - bash: |
-          docker run --rm -v $(PROJECT_FOLDER)/migrations:/flyway/sql/migrations -v $(PROJECT_FOLDER)/repeatable_migrations:/flyway/sql/repeatable_migrations flyway/flyway:$(FLYWAY_DOCKER_VERSION)-azure flyway -url='jdbc:snowflake://$(Snowflake-Account).snowflakecomputing.com/?db=$(Snowflake-DB)&warehouse=$(SNOWFLAKE_WAREHOUSE)&role=$(SNOWFLAKE_ROLE)' -user=$(Snowflake-Flyway-Username) -password='$(Snowflake-Flyway-Password)' -ignoreMigrationPatterns='*:pending' validate
+          docker run --rm -v $(PROJECT_FOLDER)/migrations:/flyway/sql/migrations flyway/flyway:$(FLYWAY_DOCKER_VERSION)-azure flyway -url='jdbc:snowflake://$(Snowflake-Account).snowflakecomputing.com/?db=$(Snowflake-DB)&warehouse=$(SNOWFLAKE_WAREHOUSE)&role=$(SNOWFLAKE_ROLE)' -user=$(Snowflake-Flyway-Username) -password='$(Snowflake-Flyway-Password)' -ignoreMigrationPatterns='*:pending' validate
